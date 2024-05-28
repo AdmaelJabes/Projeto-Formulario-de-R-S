@@ -133,11 +133,67 @@ function iniciarFormularioTres(){
     });
 }
 
+
+async function salvarNoTrello(){
+    try{
+        const nome = $inputNome.val();
+        const sobrenome = $inputSobrenome.val();
+        const email = $inputEmail.val();
+        const dataNascimento = $inputDataNascimento.val();
+        const minibio = $inputMinibio.val();
+        const endereco = $inputEndereco.val();
+        const complemento = $inputComplemento.val();
+        const cidade = $inputCidade.val();
+        const cep = $inputCep.val();
+        const habilidades = $inputHabilidades.val();
+        const pontosFortes = $inputPontosForte.val();
+        if(!nome || !sobrenome || !email || !dataNascimento || !endereco || !cidade || !cep || !habilidades || !pontosFortes){
+            return alert('Favor preencher todos os dados obrigatórios para seguir.');
+        }
+        const body = {
+            name: "Candidaro - " + nome + " " + sobrenome,
+            desc:`
+                Seguem dados do candidato(a):
+                
+                ---------------------Dados Pessoais-------------------------
+                Nome: ${nome}
+                Sobrenome: ${sobrenome}
+                Email: ${email}
+                Data de Nascimento: ${dataNascimento}
+                Minibio: ${minibio}
+
+                ---------------------Dados de Endereço----------------------
+                Endereço: ${endereco}
+                Complemento: ${complemento}
+                Cidade: ${cidade}
+                Cep: ${cep}
+
+                ---------------------Dados do candidato(a)----------------------
+                Habilidades: ${habilidades}
+                Pontos Fortes: ${pontosFortes}          
+            `
+        }
+
+        await fetch('https://api.trello.com/1/cards?idList=664b88ca9f9e7429d214d898&key=23e64462c3ec9da7221f80be400c5b6f&token=ATTAe7317e3f710a1961dc1e9816640af30fda70cb92cddc1204e5d3eb76cf484e2f4F9F5B76',
+        {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body:JSON.stringify(body)
+        });
+        return finalizarFormulario();
+    }catch(e){
+        console.log('Ocorreu erro ao salvar no Trello:', e);
+    }
+}
+
+
 function validaFormularioTres(){
     if(habilidadesValida && pontosFortesValido){
         $containerBtnFormThree.removeClass('disabled');
         $btnFormThree.removeClass('disabled');
-        $btnFormThree.off('click').on('click', finalizarFormulario);
+        $btnFormThree.off('click').on('click', salvarNoTrello);
     } else{
         $containerBtnFormThree.addClass('disabled');
         $btnFormThree.addClass('disabled');
@@ -149,7 +205,7 @@ function finalizarFormulario(){
     $stepThree.hide();
     $stepDescription.hide();
     $title.text('Muito Obrigado pela sua incrição!');
-    $stepText.text('Entraremos em contato assim que possivél, nosso prazo médio é de 5 dias. Fique atento na sua caixa de email');
+    $stepText.text('Entraremos em contato assim que possivél, nosso prazo médio é de 5 dias. Fique atento na sua caixa de email.');
 }
 
 function init() {
